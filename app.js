@@ -6,8 +6,9 @@ const fileUpload = require('express-fileupload');
 const logger = require('morgan');
 
 const apiRouter = require('./routes/api');
-const webRouter = require('./routes/web');
+const authRouter = require('./routes/api/auth');
 const { authenticateUser } = require('./middleware/auth');
+const webRouter = require('./routes/web');
 const cors = require('./middleware/cors');
 const noCache = require('./middleware/control-cache');
 
@@ -26,6 +27,7 @@ app.use(fileUpload());
 app.use(cors);
 app.use(noCache);
 
+app.use('/api/auth', authRouter);
 app.use('/api', authenticateUser, apiRouter);
 app.use('/', webRouter);
 

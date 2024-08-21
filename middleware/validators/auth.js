@@ -3,14 +3,16 @@ const { reporter } = require('./common');
 const { User } = require('../../database/models');
 
 const createAccount = [
+
   body('fullName')
-    .notEmpty()
-    .withMessage('The full name field is required')
-    .trim(),
+      .trim()
+      .notEmpty().withMessage('Name is required')
+      .if(body('name').notEmpty())
+      .isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters long'),
+
   body('email')
     .optional({ values: 'null' })
     .trim()
-    .notEmpty().withMessage('Email is required')
     .if(body('email').notEmpty())
     .isEmail().withMessage('Invalid email address'),
 
@@ -21,7 +23,6 @@ const createAccount = [
 
   body('phone')
     .trim()
-    .matches(/^0\d{9}$/)
     .notEmpty().withMessage('Phone is required')
     .if(body('phone').notEmpty())
     .isMobilePhone().withMessage('Invalid phone number'),
@@ -38,7 +39,8 @@ const createAccount = [
    body('password')
    .trim()
    .notEmpty().withMessage('The password field is required')
-   .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/)
+   .if(body('password').notEmpty())
+   .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
    ,
   reporter,
 ];

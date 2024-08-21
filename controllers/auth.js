@@ -94,7 +94,7 @@ const changePassword = async (req, res) => {
   }
 };
 
-const getAuthUser = async (req, res) => {
+const getAuthenticatedUser = async (req, res) => {
   let data = null;
   if (req.user) data = req.user;
   if (!data) return res.status(401).json({ message: 'Unauthorized' });
@@ -102,4 +102,4 @@ const getAuthUser = async (req, res) => {
 };
 
 
-module.exports = { createAccount, login, changePassword, getAuthUser };
+module.exports = { createAccount, login, changePassword, getAuthenticatedUser };

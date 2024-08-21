@@ -12,7 +12,7 @@ const authenticateUser = async (req, res, next) => {
     const { id } = jwt.verify(token, process.env.SECRET_KEY);
 
     const user = await User.findByPk(id, {
-      attributes: ['id', 'username', 'email']
+      attributes: ['id', 'username', 'email', 'role','phone'],
     });
 
     if (!user) {
