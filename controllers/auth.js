@@ -6,7 +6,7 @@ const createAccount = async (req, res) => {
   try {
     const { fullName, phone, email, role, photo, username, password, status } = req.body;
 
-    const data = await User.create({
+    const user = await User.create({
       fullName,
       phone,
       email,
@@ -19,9 +19,9 @@ const createAccount = async (req, res) => {
 
     const token = jwt.sign(
       {
-        id: data.id,
-        username: data.username,
-        role: data.role
+        id: user.id,
+        username: user.username,
+        role: user.role
       },
       process.env.SECRET_KEY,
       {
@@ -29,7 +29,16 @@ const createAccount = async (req, res) => {
       }
     );
 
-    res.status(200).json({ message: 'Created successfully', data, token });
+    const userData = {
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      status: user.status
+    };
+
+    res.status(200).json({ message: 'Created successfully', data: userData, token });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Something went wrong' });
@@ -60,8 +69,16 @@ const login = async (req, res) => {
             expiresIn: req.body.remember ? '30d' : '1h',
           }
         );
+        const userData = {
+          id: user.id,
+          fullName: user.fullName,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          status: user.status
+        };
 
-        return res.status(200).json({ message: 'Login successful', data: user, token });
+        return res.status(200).json({ message: 'Login successful', data: userData, token });
       }
 
       res.status(403).json({ message: 'Wrong username/password combination' });
