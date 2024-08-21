@@ -232,7 +232,13 @@ Junction table to associate persons with families.
    ```sh
    npm run dev
    ```
-
+6. **Initial routes:**
+   ```sh
+   base: http://localhost:3033/api
+   login: http://localhost:3033/api/auth/login
+   register: http://localhost:3033/api/auth/register
+   authUser: login: http://localhost:3033/api/authenticated/user
+   ```
 
 
 
