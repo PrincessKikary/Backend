@@ -1,112 +1,193 @@
-# Tuhoyee Family
+# Family Tree Application Database Design
 
-Tuhoyee Family is a unique application designed to foster a sense of belonging by preserving and sharing family customs, morals, traditions, and stories. It allows families to create and maintain an interactive family tree, making it easier to connect with ancestors and discover family relationships.
+## Overview
 
-![Tuhoyee Family](path/to/your/image.jpg)
+This document outlines the database design for our Family Tree Application. The design focuses on flexibility, scalability, and the ability to represent complex family relationships and historical data.
 
-## Table of Contents
+## Entity-Relationship Diagram
 
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the Application](#running-the-application)
-- [Project Structure](#project-structure)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+```mermaid
+erDiagram
+    PERSON {
+        int person_id PK
+        string first_name
+        string last_name
+        date birth_date
+        date death_date
+        enum gender
+        string birth_place
+        string death_place
+    }
+    RELATIONSHIP {
+        int relationship_id PK
+        int person1_id FK
+        int person2_id FK
+        enum relationship_type
+        date start_date
+        date end_date
+    }
+    EVENT {
+        int event_id PK
+        int person_id FK
+        string event_type
+        date event_date
+        string event_place
+        text description
+    }
+    DOCUMENT {
+        int document_id PK
+        int person_id FK
+        string document_type
+        string file_path
+        date upload_date
+        text description
+    }
+    DNA_TEST {
+        int dna_test_id PK
+        int person_id FK
+        string test_type
+        date test_date
+        json results
+    }
+    PERSON_ALIAS {
+        int alias_id PK
+        int person_id FK
+        string alias_name
+        string alias_type
+    }
+    FAMILY {
+        int family_id PK
+        string family_name
+    }
+    PERSON_FAMILY {
+        int person_id FK
+        int family_id FK
+    }
 
-## Features
+    PERSON ||--o{ RELATIONSHIP : "has"
+    PERSON ||--o{ EVENT : "experiences"
+    PERSON ||--o{ DOCUMENT : "has"
+    PERSON ||--o{ DNA_TEST : "takes"
+    PERSON ||--o{ PERSON_ALIAS : "has"
+    PERSON }|--o{ PERSON_FAMILY : "belongs to"
+    FAMILY ||--o{ PERSON_FAMILY : "includes"
+```
 
-- **Register Family Members**: Add and manage details of family members.
-- **Generate Family Tree**: Visualize your family tree structure.
-- **Share Stories**: Share and preserve stories and documents within the family.
-- **Family Chat**: Communicate and share media with family members.
-- **Data Integrity**: Securely store and retrieve family data without loss.
+## Table Descriptions
 
-## Technologies Used
+### 1. PERSON
 
-- **Frontend**: React.js
-- **Backend**: Node.js with Express
-- **Database**: MySQL (using Sequlize ORM)
-- **Styling**: CSS
+The core table of our database, storing essential information about individuals.
 
-## Getting Started
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| person_id   | INT       | PRIMARY KEY | Unique identifier for each person |
+| first_name  | VARCHAR(50) | NOT NULL  | First name of the person |
+| last_name   | VARCHAR(50) | NOT NULL  | Last name of the person |
+| birth_date  | DATE      |             | Date of birth |
+| death_date  | DATE      |             | Date of death (if applicable) |
+| gender      | ENUM      |             | Gender of the person |
+| birth_place | VARCHAR(100) |           | Place of birth |
+| death_place | VARCHAR(100) |           | Place of death (if applicable) |
 
-### Prerequisites
+### 2. RELATIONSHIP
 
-Make sure you have the following installed:
+Represents various types of relationships between individuals.
 
-- Node.js
-- npm (Node Package Manager)
-- MySQL
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| relationship_id | INT   | PRIMARY KEY | Unique identifier for each relationship |
+| person1_id | INT        | FOREIGN KEY | ID of the first person in the relationship |
+| person2_id | INT        | FOREIGN KEY | ID of the second person in the relationship |
+| relationship_type | ENUM | NOT NULL   | Type of relationship (e.g., parent-child, spouse, sibling) |
+| start_date | DATE       |             | Start date of the relationship |
+| end_date   | DATE       |             | End date of the relationship (if applicable) |
 
-### Installation
+### 3. EVENT
 
-1. **Clone the Repository:**
-   ```sh
-   git clone https://github.com/developer006tz/tuhoyeFamilyTree.git
-   cd tuhoyeFamilyTree
+Stores significant life events for each person.
 
-## Project Structure
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| event_id    | INT       | PRIMARY KEY | Unique identifier for each event |
+| person_id   | INT       | FOREIGN KEY | ID of the person associated with the event |
+| event_type  | VARCHAR(50) | NOT NULL  | Type of event (e.g., birth, death, marriage, graduation) |
+| event_date  | DATE      | NOT NULL    | Date of the event |
+| event_place | VARCHAR(100) |           | Place where the event occurred |
+| description | TEXT      |             | Additional details about the event |
 
-tuhoyeFamilyTree/
-├── backend/
-│ ├── bin/
-│ ├── controllers/
-│ ├── database
-│ │ ├── config
-│ │ ├── migration
-│ │ ├── seeders
-│ ├── middleware/
-│ ├── node_modules/
-│ ├── routes/
-│ ├── node_modules/
-│ ├── package.json
-│ ├── process.json
-│ ├── .gitignore
-│ ├── app.js
-├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── AddMember.js
-│ │ │ ├── FamilyTree.js
-│ │ │ ├── MemberDetails.js
-│ │ │ ├── RelationshipForm.js
-│ │ ├── App.js
-│ │ ├── index.js
-│ │ ├── styles.css
-│ ├── node_modules/
-│ ├── package.json
+### 4. DOCUMENT
 
+Manages documents and media associated with individuals.
 
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| document_id | INT       | PRIMARY KEY | Unique identifier for each document |
+| person_id   | INT       | FOREIGN KEY | ID of the person associated with the document |
+| document_type | VARCHAR(50) | NOT NULL | Type of document (e.g., photo, certificate, letter) |
+| file_path   | VARCHAR(255) | NOT NULL  | Path to the stored file |
+| upload_date | DATE      | NOT NULL    | Date the document was uploaded |
+| description | TEXT      |             | Description of the document |
 
-## Usage
+### 5. DNA_TEST
 
-1. **Add a Family Member**: Start by adding the first member to your family tree.
-2. **Visualize the Tree**: View the family tree structure and explore relationships.
-3. **Share Stories**: Document and share valuable family stories and history.
-4. **Engage with Family**: Use the chat feature to stay connected with family members.
+Stores information about genetic testing.
 
-## Contributing
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| dna_test_id | INT       | PRIMARY KEY | Unique identifier for each DNA test |
+| person_id   | INT       | FOREIGN KEY | ID of the person who took the test |
+| test_type   | VARCHAR(50) | NOT NULL  | Type of DNA test |
+| test_date   | DATE      | NOT NULL    | Date the test was taken |
+| results     | JSON      |             | Flexible storage for various test results |
 
-We welcome contributions from the community. If you would like to contribute, please follow these steps:
+### 6. PERSON_ALIAS
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
+Handles alternative names or spellings for individuals.
 
-## License
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| alias_id    | INT       | PRIMARY KEY | Unique identifier for each alias |
+| person_id   | INT       | FOREIGN KEY | ID of the person associated with the alias |
+| alias_name  | VARCHAR(100) | NOT NULL | Alternative name or spelling |
+| alias_type  | VARCHAR(50) |           | Type of alias (e.g., nickname, maiden name) |
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+### 7. FAMILY
 
-## Contact
+Allows grouping of individuals into families.
 
-For any inquiries or suggestions, feel free to contact us:
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| family_id   | INT       | PRIMARY KEY | Unique identifier for each family |
+| family_name | VARCHAR(100) | NOT NULL | Name of the family |
 
-- **Email**: developer@socialsmarttech.com
-- **GitHub Issues**: [https://github.com/developer006tz/tuhoyeFamilyTree.git](https://github.com/developer006tz/tuhoyeFamilyTree.git)
+### 8. PERSON_FAMILY
+
+Junction table to associate persons with families.
+
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| person_id   | INT       | FOREIGN KEY | ID of the person |
+| family_id   | INT       | FOREIGN KEY | ID of the family |
+
+## Implementation Considerations
+
+1. **Indexing**: Create indexes on frequently queried fields, such as names and dates, to improve query performance.
+
+2. **Constraints**: Implement foreign key constraints to maintain referential integrity across tables.
+
+3. **Stored Procedures**: Develop stored procedures for complex operations like calculating relationships or generating family trees.
+
+4. **Views**: Create views for commonly used data combinations to simplify querying.
+
+5. **Partitioning**: For large datasets, consider table partitioning to improve query performance and manageability.
+
+6. **Auditing**: Implement an auditing system to track changes to sensitive data, ensuring data integrity and supporting historical analysis.
+
+7. **Encryption**: Use column-level encryption for sensitive information to enhance data security.
+
+8. **Scalability**: Design the database with future growth in mind, allowing for easy expansion of data types and relationships.
+
+## Conclusion
+
+This database design provides a robust foundation for our Family Tree Application. It offers flexibility in representing complex family relationships, supports various types of historical data, and allows for future expansion. Regular review and optimization of the database structure and queries will ensure optimal performance as the application grows.
