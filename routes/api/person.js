@@ -88,7 +88,7 @@ const controller = require('../../controllers/person');
  *       400:
  *         description: Invalid input
  */
-router.post('/', validator.createPerson, controller.createPerson);
+router.post('/', controller.createPerson);
 
 /**
  * @swagger

@@ -22,10 +22,6 @@ const options = {
         description: 'User authentication operations'
       },
       {
-        name: 'User',
-        description: 'Operations about users'
-      },
-      {
         name: 'Person',
         description: 'Operations about persons'
       },
