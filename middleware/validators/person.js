@@ -83,25 +83,79 @@ const createPerson = [
 ];
 
 const updatePerson = [
-  param('person_id')
-    .custom(validateUUID).withMessage('Invalid person ID format')
-    .custom(async (value) => {
-      const person = await Person.findByPk(value);
-      if (!person) {
-        throw new Error('Person not found');
-      }
-      return true;
-    }),
-  ...createPerson.filter(validator => validator.fields[0] !== 'first_name' && validator.fields[0] !== 'last_name'),
-  body('first_name')
-    .optional()
-    .trim()
-    .isLength({ min: 2, max: 50 }).withMessage('First name must be between 2 and 50 characters long'),
-  body('last_name')
-    .optional()
-    .trim()
-    .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters long'),
-];
+    param('person_id')
+      .custom(validateUUID).withMessage('Invalid person ID format')
+      .custom(async (value) => {
+        const person = await Person.findByPk(value);
+        if (!person) {
+          throw new Error('Person not found');
+        }
+        return true;
+      }),
+    body('first_name')
+      .optional()
+      .trim()
+      .isLength({ min: 2, max: 50 }).withMessage('First name must be between 2 and 50 characters long'),
+    body('last_name')
+      .optional()
+      .trim()
+      .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters long'),
+    body('birth_date')
+      .optional()
+      .isISO8601().withMessage('Invalid birth date format. Use ISO8601 format (YYYY-MM-DD).')
+      .custom((value) => {
+        const birthDate = new Date(value);
+        const currentDate = new Date();
+        if (birthDate > currentDate) {
+          throw new Error('Birth date cannot be in the future');
+        }
+        return true;
+      }),
+    body('death_date')
+      .optional()
+      .isISO8601().withMessage('Invalid death date format. Use ISO8601 format (YYYY-MM-DD).')
+      .custom((value, { req }) => {
+        const deathDate = new Date(value);
+        const birthDate = new Date(req.body.birth_date);
+        const currentDate = new Date();
+        if (deathDate > currentDate) {
+          throw new Error('Death date cannot be in the future');
+        }
+        if (birthDate && deathDate < birthDate) {
+          throw new Error('Death date cannot be earlier than birth date');
+        }
+        return true;
+      }),
+    body('gender')
+      .optional()
+      .isIn(['male', 'female', 'other']).withMessage('Invalid gender. Must be male, female, or other.'),
+    body('birth_place')
+      .optional()
+      .trim()
+      .isLength({ max: 100 }).withMessage('Birth place must not exceed 100 characters'),
+    body('death_place')
+      .optional()
+      .trim()
+      .isLength({ max: 100 }).withMessage('Death place must not exceed 100 characters'),
+    body('family_ids')
+      .optional()
+      .isArray().withMessage('Family IDs must be an array')
+      .custom(async (value) => {
+        if (value && value.length > 0) {
+          for (const id of value) {
+            if (!validateUUID(id)) {
+              throw new Error(`Invalid family ID format: ${id}`);
+            }
+            const family = await Family.findByPk(id);
+            if (!family) {
+              throw new Error(`Family with ID ${id} not found`);
+            }
+          }
+        }
+        return true;
+      }),
+    reporter,
+  ];
 
 const deletePerson = [
   param('person_id')

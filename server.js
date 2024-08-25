@@ -1,3 +1,4 @@
+// server.js
 const app = require('./app');
 const http = require('http');
 const debug = require('debug')('family-be:server');
