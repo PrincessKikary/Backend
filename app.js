@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swaggerConfig');
+const { swaggerSpec, swaggerUiOptions } = require('./swaggerConfig');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
@@ -17,7 +17,7 @@ const noCache = require('./middleware/control-cache');
 const app = express();
 
 // Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

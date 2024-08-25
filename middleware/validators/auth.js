@@ -1,3 +1,4 @@
+//middleware/validators/auth.js
 const { body } = require('express-validator');
 const { reporter } = require('./common');
 const { User } = require('../../database/models');

@@ -1,6 +1,6 @@
+// swaggerConfig.js
 const swaggerJsdoc = require('swagger-jsdoc');
 const baseUrl = require('./utils/config');
-
 
 const options = {
   definition: {
@@ -16,6 +16,52 @@ const options = {
         description: 'Development server',
       },
     ],
+    tags: [
+      {
+        name: 'Authentication',
+        description: 'User authentication operations'
+      },
+      {
+        name: 'User',
+        description: 'Operations about users'
+      },
+      {
+        name: 'Person',
+        description: 'Operations about persons'
+      },
+      {
+        name: 'Events',
+        description: 'Event management'
+      },
+      {
+        name: 'Relationship',
+        description: 'Relationship management'
+      },
+      {
+        name: 'Family',
+        description: 'Family management'
+      },
+      {
+        name: 'Document',
+        description: 'Document management'
+      },
+      {
+        name: 'DNA Test',
+        description: 'DNA test management'
+      },
+      {
+        name: 'Person Alias',
+        description: 'Person alias management'
+      },
+      {
+        name: 'Family Tree',
+        description: 'Family tree operations'
+      },
+      {
+        name: 'Dashboard',
+        description: 'Dashboard operations'
+      }
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -29,7 +75,27 @@ const options = {
       bearerAuth: [],
     }],
   },
-  apis: ['./routes/api/*.js'], // Path to the API routes
+  apis: ['./routes/api/*.js'], 
 };
 
-module.exports = swaggerJsdoc(options);
+
+const swaggerSpec = swaggerJsdoc(options);
+
+const swaggerUiOptions = {
+  explorer: true,
+  swaggerOptions: {
+    plugins: [
+      {
+        statePlugins: {
+          spec: {
+            wrapSelectors: {
+              allowTryItOutFor: () => () => true
+            }
+          }
+        }
+      }
+    ]
+  }
+};
+
+module.exports = { swaggerSpec, swaggerUiOptions };
