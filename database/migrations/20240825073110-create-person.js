@@ -1,16 +1,35 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('People', {
-      id: {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Persons', {
+      person_id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
       },
       first_name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(50),
+        allowNull: false
+      },
+      last_name: {
+        type: Sequelize.STRING(50),
+        allowNull: false
+      },
+      birth_date: {
+        type: Sequelize.DATE
+      },
+      death_date: {
+        type: Sequelize.DATE
+      },
+      gender: {
+        type: Sequelize.ENUM('male', 'female', 'other')
+      },
+      birth_place: {
+        type: Sequelize.STRING(100)
+      },
+      death_place: {
+        type: Sequelize.STRING(100)
       },
       createdAt: {
         allowNull: false,
@@ -22,7 +41,7 @@ module.exports = {
       }
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('People');
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('Persons');
   }
 };

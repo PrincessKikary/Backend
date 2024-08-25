@@ -1,16 +1,32 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('DnaTests', {
-      id: {
+      dna_test_id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
       },
-      first_name: {
-        type: Sequelize.STRING
+      person_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Persons',
+          key: 'person_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      test_type: {
+        type: Sequelize.STRING(50),
+        allowNull: false
+      },
+      test_date: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      results: {
+        type: Sequelize.JSON
       },
       createdAt: {
         allowNull: false,
@@ -22,7 +38,7 @@ module.exports = {
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('DnaTests');
   }
 };

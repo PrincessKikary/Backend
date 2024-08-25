@@ -1,16 +1,40 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Relationships', {
-      id: {
+      relationship_id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
       },
-      first_name: {
-        type: Sequelize.STRING
+      person1_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Persons',
+          key: 'person_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      person2_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'Persons',
+          key: 'person_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      relationship_type: {
+        type: Sequelize.ENUM('parent-child', 'spouse', 'sibling'),
+        allowNull: false
+      },
+      start_date: {
+        type: Sequelize.DATE
+      },
+      end_date: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
@@ -22,7 +46,7 @@ module.exports = {
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Relationships');
   }
 };
