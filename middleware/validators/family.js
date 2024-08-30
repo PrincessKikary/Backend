@@ -1,6 +1,6 @@
 const { body, param, query } = require('express-validator');
 const { reporter, pagination } = require('./common');
-const { Family, Person } = require('../../database/models');
+const { Family, Person, User } = require('../../database/models');
 const { Op } = require('sequelize');
 
 const validateUUID = (value) => {
@@ -17,6 +17,17 @@ const createFamily = [
       const existingFamily = await Family.findOne({ where: { family_name: value } });
       if (existingFamily) {
         throw new Error('This family name already exists');
+      }
+      return true;
+    }),
+
+  body('created_by')
+    .notEmpty().withMessage('User ID is required')
+    .custom(validateUUID).withMessage('Invalid User ID format')
+    .custom(async (value) => {
+      const user = await User.findByPk(value);
+      if (!user) {
+        throw new Error('User not found');
       }
       return true;
     }),

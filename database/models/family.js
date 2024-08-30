@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class Family extends Model {
     static associate(models) {
       Family.belongsToMany(models.Person, { through: 'PersonFamily', foreignKey: 'family_id' });
+      Family.belongsTo(models.User, { foreignKey: 'created_by' });
     }
   }
   Family.init({
@@ -16,7 +17,16 @@ module.exports = (sequelize, DataTypes) => {
     family_name: {
       type: DataTypes.STRING(100),
       allowNull: false
-    }
+    },
+    created_by: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Users',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL'
+    },
   }, {
     sequelize,
     modelName: 'Family',
