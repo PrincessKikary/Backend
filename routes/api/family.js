@@ -57,6 +57,45 @@ const controller = require('../../controllers/family');
  */
 router.post('/', validator.createFamily, controller.createFamily);
 
+
+/**
+ * @swagger
+ * /family/{user_id}:
+ *   get:
+ *     summary: Get families created by a specific user
+ *     tags: [Family]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the user whose families to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the user's families
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Family'
+ *       400:
+ *         description: Invalid input (e.g., invalid user_id format)
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.get('/:user_id', validator.getUserFamilies, controller.getUserFamilies);
+
 /**
  * @swagger
  * /family/{family_id}:

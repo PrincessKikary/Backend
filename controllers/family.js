@@ -33,6 +33,27 @@ const createFamily = async (req, res) => {
     }
 };
 
+const getUserFamilies = async (req, res) => {
+    const { user_id } = req.params;
+    try {
+        const families = await Family.findAll({
+            where: {
+                created_by: user_id
+            }
+        });
+        res.status(200).json({
+            message: 'success',
+            data: families
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'failed',
+            error: err.message
+        });
+    }
+};
+
 const updateFamily = async (req, res) => {
     const { family_id } = req.params;
     const { family_name, description, founding_date, person_ids } = req.body;
@@ -202,6 +223,7 @@ const removePersonFromFamily = async (req, res) => {
 
 module.exports = {
     createFamily,
+    getUserFamilies,
     updateFamily,
     deleteFamily,
     getFamily,
