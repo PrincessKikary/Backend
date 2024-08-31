@@ -11,6 +11,7 @@ const controller = require('../../controllers/family');
  *       type: object
  *       required:
  *         - family_name
+ *         - created_by
  *       properties:
  *         family_id:
  *           type: string
@@ -19,6 +20,10 @@ const controller = require('../../controllers/family');
  *         family_name:
  *           type: string
  *           description: The name of the family
+ *         created_by:
+ *           type: string
+ *           format: uuid
+ *           description: The id of the User who created the family
  *         description:
  *           type: string
  *           description: A description of the family

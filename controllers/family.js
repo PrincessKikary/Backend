@@ -2,12 +2,17 @@ const { Family, Person } = require('../database/models');
 const { Op } = require('sequelize');
 
 const createFamily = async (req, res) => {
-    const { family_name, description, founding_date, person_ids } = req.body;
+    const { family_name, description,created_by, founding_date, person_ids } = req.body;
     try {
+        if(!created_by){
+            const user = req.user;
+            created_by = user.person_id;
+        }
         const family = await Family.create({
             family_name,
             description,
-            founding_date
+            founding_date,
+            created_by
         });
 
         if (person_ids && person_ids.length > 0) {
