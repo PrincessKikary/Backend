@@ -12,6 +12,14 @@ module.exports = {
         type: Sequelize.STRING(100),
         allowNull: false
       },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      founding_date: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
       created_by: {
         type: Sequelize.UUID,
         references: {

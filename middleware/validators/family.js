@@ -70,6 +70,19 @@ const createFamily = [
   reporter,
 ];
 
+const getUserFamilies = [
+  param('user_id')
+    .notEmpty().withMessage('User ID is required')
+    .custom(validateUUID).withMessage('Invalid user ID format')
+    .custom(async (value) => {
+      const user = await User.findByPk(value);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return true;
+    }),
+];
+
 const updateFamily = [
   param('family_id')
     .custom(validateUUID).withMessage('Invalid family ID format')
@@ -234,6 +247,7 @@ const removePersonFromFamily = [
 
 module.exports = {
   createFamily,
+  getUserFamilies,
   updateFamily,
   deleteFamily,
   getFamily,
