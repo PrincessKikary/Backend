@@ -207,7 +207,7 @@ Junction table to associate persons with families.
    ```
    Create a `.env` file in the root directory with the following content:
    ```
-   PORT=3033
+   PORT=3003
    DB_USERNAME=root
    DB_PASSWORD="your_db_password"
    DB_DATABASE=family
@@ -233,7 +233,7 @@ Junction table to associate persons with families.
    npm run dev
    ```
 6. **Initial routes:**
-   ```sh
+   ```shn
    base: http://localhost:3003/api
    login: http://localhost:3003/api/auth/login
    register: http://localhost:3003/api/auth/register

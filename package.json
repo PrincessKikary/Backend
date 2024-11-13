@@ -14,8 +14,9 @@
   ],
   "author": "Ludovick Konyo",
   "license": "ISC",
-  "description": "",
+  "description": "This document outlines the database design for our Family Tree Application. The design focuses on flexibility, scalability, and the ability to represent complex family relationships and historical data.",
   "dependencies": {
+    "@apollo/server": "^4.11.2",
     "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
@@ -24,6 +25,7 @@
     "express": "^4.16.1",
     "express-fileupload": "^1.4.3",
     "express-validator": "^7.0.1",
+    "graphql": "^16.9.0",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.3.1",
@@ -37,5 +39,7 @@
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
-  }
+  },
+  "main": "app.js",
+  "type": "module"
 }

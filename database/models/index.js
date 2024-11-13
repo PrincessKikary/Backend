@@ -1,4 +1,75 @@
-'use strict';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+
+import db from './db.js'
+import { typeDefs } from './schema.js'
+
+
+const resolvers = {
+  Query: {
+    family() {
+      return db.family.map(family =>({
+        ...family,
+        members: db.person.filter(person=> person.familyId === family.id)
+      }))
+    },
+    person() {
+      return db.person.map(person => ({
+        ...person,
+        family: db.family.find(family => family.id === person.familyId),
+        relationships: db.relationship
+          .filter(rel => rel.person1Id === person.id || rel.person2Id === person.id)
+          .map(rel => ({
+            id:rel.id,
+            type:rel.type,
+            person:db.person.find(p => p.id === (rel.person1Id === person.id ? rel.person2Id :rel.personId))
+          }))
+      }))
+    },
+    relationship() {
+      return db.relationship.map(rel => ({
+        id: rel.id,
+        type:rel.type,
+        person: db.person.find(p => p.id === rel.person2Id)
+      }))
+    }
+  }
+}
+
+// server setup 
+const server = new ApolloServer({
+  typeDefs,
+
+})
+
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 }
+})
+
+console.log('Server ready at port', 4000)
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -45,4 +116,4 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+module.exports = db;*/
