@@ -17,6 +17,9 @@ const resolvers = {
       return db.person.map(person => ({
         ...person,
         family: db.family.find(family => family.id === person.familyId),
+        mother: db.person.find(p => p.id === person.motherId) || null,
+        father: db.person.find(p => p.id === person.fatherId) || null,
+        children: db.person.filter(child => child.motherId === person.id || child.fatherId === person.id),
         relationships: db.relationship
           .filter(rel => rel.person1Id === person.id || rel.person2Id === person.id)
           .map(rel => ({
@@ -24,7 +27,7 @@ const resolvers = {
             type:rel.type,
             person:db.person.find(p => p.id === (rel.person1Id === person.id ? rel.person2Id :rel.personId))
           }))
-      }))
+      }));
     },
     relationship() {
       return db.relationship.map(rel => ({

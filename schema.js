@@ -9,6 +9,9 @@ type Person {
     name:String!
     age:Int
     family: Family!
+    mother: Person
+    father: Person
+    children: [Person!]!
     relationships: [Relationship!]!
 }
 
