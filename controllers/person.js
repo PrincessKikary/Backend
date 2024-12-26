@@ -13,7 +13,7 @@ const createPerson = async (req, res) => {
 
         const person = await Person.create({
             first_name,
-            last_name: last_name || null,
+            last_name: last_name || " ",
             birth_date,
             death_date,
             gender,
