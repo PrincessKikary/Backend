@@ -4,9 +4,16 @@ const { Op } = require('sequelize');
 const createPerson = async (req, res) => {
     const { first_name, last_name, birth_date, death_date, gender, birth_place, death_place, family_ids } = req.body;
     try {
+        if (!first_name) {
+            return res.status(400).json({
+                message: 'failed',
+                error: 'First name is required'
+            });
+        }
+
         const person = await Person.create({
             first_name,
-            last_name,
+            last_name: last_name || null,
             birth_date,
             death_date,
             gender,

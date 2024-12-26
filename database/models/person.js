@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     last_name: {
       type: DataTypes.STRING(50),
-      allowNull: false
+      allowNull: true
     },
     birth_date: DataTypes.DATE,
     death_date: DataTypes.DATE,

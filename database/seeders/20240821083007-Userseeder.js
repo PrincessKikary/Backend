@@ -16,6 +16,7 @@ module.exports = {
           username: 'admin',
           password: bcrypt.hashSync('admin', 10),
           role: 'admin',
+          status:'active',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -26,6 +27,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-   
+    return queryInterface.bulkDelete('Users', null, {});
   }
 };
