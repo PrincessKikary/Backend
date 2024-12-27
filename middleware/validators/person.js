@@ -17,7 +17,16 @@ const createPerson = [
   body('last_name')
     .trim()
     .optional({ nullable: true })
-    .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters long'),
+    .custom((value) => {
+      // Allow null, empty string, or valid length
+      if (value === null || value === '') {
+        return true;
+      }
+      if (value.length >= 2 && value.length <= 50) {
+        return true;
+      }
+      throw new Error('Last name must be between 2 and 50 characters long');
+    }),
 
   body('birth_date')
     .optional({ nullable: true })

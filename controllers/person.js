@@ -2,38 +2,69 @@ const { Person, Relationship, Event, Document, DnaTest, PersonAlias, Family } = 
 const { Op } = require('sequelize');
 
 const createPerson = async (req, res) => {
-    const { first_name, last_name, birth_date, death_date, gender, birth_place, death_place, family_ids } = req.body;
+    console.log('Received person creation request:', {
+        body: req.body,
+        headers: req.headers
+    });
+
     try {
-        if (!first_name) {
+        const { 
+            first_name,
+            last_name = null, // Default to null if not provided
+            birth_date = null,
+            death_date = null,
+            gender = null,
+            birth_place = null,
+            death_place = null,
+            family_ids = []
+        } = req.body;
+
+        if (!first_name || first_name.trim() === '') {
             return res.status(400).json({
                 message: 'failed',
                 error: 'First name is required'
             });
         }
-
-        const person = await Person.create({
-            first_name,
-            last_name: last_name || " ",
+        
+        const personData = {
+            first_name: first_name.trim(),
+            last_name: last_name ? last_name.trim() : null,
             birth_date,
             death_date,
             gender,
-            birth_place,
-            death_place
-        });
+            birth_place: birth_place ? birth_place.trim() : null,
+            death_place: death_place ? death_place.trim() : null
+        };
+        console.log('Attempting to create person with data:', personData);
+        
+        const person = await Person.create(personData);
 
         if (family_ids && family_ids.length > 0) {
             await person.setFamilies(family_ids);
         }
+        console.log('Person created successfully:', person);
 
         res.status(201).json({
             message: 'success',
             data: person
         });
     } catch (err) {
-        console.error(err);
+        console.error('Person creation error:', {
+            name: err.name,
+            message: err.message,
+            stack: err.stack
+        });
+
+        if (err.name === 'ValidationError' || err.name === 'SequelizeValidationError') {
+            return res.status(400).json({
+                message: 'failed',
+                error: err.message
+            });
+        }
+
         res.status(500).json({
             message: 'failed',
-            error: err.message
+            error:  'An error occurred while creating the person'
         });
     }
 };
