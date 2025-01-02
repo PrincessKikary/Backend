@@ -10,7 +10,7 @@ const createPerson = async (req, res) => {
     try {
         const { 
             first_name,
-            last_name = null, // Default to null if not provided
+            last_name = null, 
             birth_date = null,
             death_date = null,
             gender = null,
